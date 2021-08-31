@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+import django.apps
 from .models import random
 from django.utils.html import format_html
 
@@ -7,8 +8,22 @@ from django.utils.html import format_html
 class randomAdmin(admin.ModelAdmin):
     #exclude use for disappearing table content from admin dashboard
     #exclude = ('created_at',) 
+    
+
     #display fields
     list_display = ('name','colored_name','address','less_content','imageShow','created_at','button',)
+
+    #fields= ['name',('address','created_at')] #this will display same as list display
+
+
+     # TEXT = 'some text for description'
+    '''fieldset = (
+        ('section 1',{
+            'fields':('title', 'author',),
+            'description': '%s' % TEXT,
+            'classes' : ('collapse',),
+        }),
+     )'''
 
     #filte by created time
     list_filter = ('created_at',)
@@ -63,6 +78,15 @@ class randomAdmin(admin.ModelAdmin):
 admin.site.site_title="Admin"
 admin.site.site_header="Admin Dashboard"
 admin.site.index_title =  "Welcome to the Dashboard"
-admin.site.register(random,randomAdmin)
+#admin.site.register(random,randomAdmin)
+
+models = django.apps.apps.get_models()
+
+for model in models:
+    try:
+        admin.site.register(model)
+    except admin.sites.AlreadyRegistered:
+        pass
+
 admin.site.unregister(Group)
 
